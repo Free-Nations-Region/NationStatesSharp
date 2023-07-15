@@ -59,7 +59,7 @@ namespace NationStatesSharp
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
-            async void _continue(Task<HttpResponseMessage> prev)
+            async void ContinueAsync(Task<HttpResponseMessage> prev)
             {
                 await Task.Delay(TimeSpan.FromTicks(API_REQUEST_INTERVAL)).ConfigureAwait(false);
                 if (_semaphore.CurrentCount == 0)
@@ -67,10 +67,16 @@ namespace NationStatesSharp
                     _semaphore.Release();
                 }
             }
-            while (await _requestQueue.WaitForNextItemAsync(cancellationToken).ConfigureAwait(false))
+            bool isProcessing = true;
+            while (isProcessing)
             {
+                await _requestQueue.WaitForNextItemAsync(cancellationToken).ConfigureAwait(false);
                 var ticks = DateTime.UtcNow.Ticks;
                 var request = _requestQueue.Dequeue();
+                if (request.Status != RequestStatus.Pending)
+                {
+                    continue;
+                }
                 _logger.Debug("Request [{traceId}] has been dequeued. Queue size: {size}", request.TraceId, _requestQueue.Count);
                 _logger.Verbose("[{traceId}]: Acquiring Semaphore", request.TraceId);
                 await _semaphore.WaitAsync().ConfigureAwait(false);
@@ -78,7 +84,7 @@ namespace NationStatesSharp
                 try
                 {
                     var task = _dataService.ExecuteRequestAsync(request, cancellationToken);
-                    _ = task.ContinueWith(_continue, cancellationToken);
+                    _ = task.ContinueWith(ContinueAsync, cancellationToken);
                     var httpResponse = await task.ConfigureAwait(false);
                     if (!httpResponse.IsSuccessStatusCode)
                     {
@@ -100,6 +106,10 @@ namespace NationStatesSharp
                     {
                         throw new NotImplementedException($"Unknown ResponseFormat: {request.ResponseFormat}");
                     }
+                }
+                catch (Exception ex) when (ex is TaskCanceledException)
+                {
+                    isProcessing = false;
                 }
                 catch (Exception ex)
                 {
