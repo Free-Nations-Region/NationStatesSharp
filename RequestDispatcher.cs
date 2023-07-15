@@ -79,9 +79,9 @@ namespace NationStatesSharp
                 _worker.RestartRequired += RequestQueue_RestartRequired;
                 Task.Run(async () => await _worker.RunAsync(_tokenSource.Token).ConfigureAwait(false));
             }
-            else
+            else if(Log.Logger.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {
-                throw new InvalidOperationException("The dispatcher is already running.");
+                Log.Logger.Debug("Attempted to start already running requestDispatcher.");
             }
         }
 
