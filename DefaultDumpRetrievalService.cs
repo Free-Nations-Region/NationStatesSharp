@@ -16,20 +16,24 @@ namespace NationStatesSharp
     {
         private readonly IRequestDispatcher _dispatcher;
         private readonly ILogger _logger;
-
-#pragma warning disable CS1591
-
+        /// <summary>
+        /// Creates DefaultDumpRetrievalService
+        /// </summary>
+        /// <param name="requestDispatcher">The requestDispatcher to use</param>
+        /// <param name="logger">The logger to use</param>
         public DefaultDumpRetrievalService(IRequestDispatcher requestDispatcher, ILogger logger)
         {
             _dispatcher = requestDispatcher;
             _logger = logger.ForContext<DefaultDumpRetrievalService>();
         }
-
+        /// <summary>
+        /// Creates DefaultDumpRetrievalService
+        /// </summary>
+        /// <param name="requestDispatcher">The requestDispatcher to use</param>
         public DefaultDumpRetrievalService(IRequestDispatcher requestDispatcher) : this(requestDispatcher, Log.Logger)
         {
         }
 
-#pragma warning restore CS1591
 
         ///<inheritdoc/>
         ///<exception cref="HttpRequestFailedException">Thrown when the HTTP Request failed.</exception>

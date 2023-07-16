@@ -14,18 +14,29 @@ namespace NationStatesSharp
         private readonly CancellationTokenSource _tokenSource = new();
         private RequestWorker _worker;
 
-        public RequestDispatcher(string userAgent, ILogger logger)
+        public RequestDispatcher(string userAgent, ILogger logger, bool doStart)
         {
+            if(logger is null)
+            {
+                ConfigureLogging();
+                logger = Log.Logger;
+            }
             _worker = new RequestWorker(userAgent, logger);
+            if (doStart)
+            {
+                Start();
+            }
         }
 
-        public RequestDispatcher(string userAgent)
+        public RequestDispatcher(string userAgent, ILogger logger) : this(userAgent, logger, true)
         {
-            ConfigureLogging();
-            _worker = new RequestWorker(userAgent, Log.Logger);
         }
 
-        public void Dispatch(Request request, int priority = 1000)
+        public RequestDispatcher(string userAgent): this(userAgent, null)
+        {
+        }
+
+        public void Dispatch(Request request, uint priority = 1000)
         {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -33,8 +44,8 @@ namespace NationStatesSharp
                 throw new InvalidOperationException("Request cannot be dispatched when the dispatcher has not been started yet.");
             _worker.Enqueue(request, priority);
         }
-
-        public void Dispatch(IEnumerable<Request> requests, int priority = 1000)
+        
+        public void Dispatch(IEnumerable<Request> requests, uint priority = 1000)
         {
             if (requests is null)
                 throw new ArgumentNullException(nameof(requests));
@@ -68,9 +79,9 @@ namespace NationStatesSharp
                 _worker.RestartRequired += RequestQueue_RestartRequired;
                 Task.Run(async () => await _worker.RunAsync(_tokenSource.Token).ConfigureAwait(false));
             }
-            else
+            else if(Log.Logger.IsEnabled(Serilog.Events.LogEventLevel.Debug))
             {
-                throw new InvalidOperationException("The dispatcher is already running.");
+                Log.Logger.Debug("Attempted to start already running requestDispatcher.");
             }
         }
 
@@ -80,5 +91,8 @@ namespace NationStatesSharp
                 .MinimumLevel.Debug()
                 .WriteTo.Console(theme: SystemConsoleTheme.Literate).CreateLogger();
         }
+
+        public void AddToQueue(Request request, uint priority = 1000) => Dispatch(request, priority);
+        public void AddToQueue(IEnumerable<Request> requests, uint priority = 1000) => Dispatch(requests, priority);
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NationStatesSharp
 {
-    public class HttpDataService : IHttpDataService
+    internal class HttpDataService : IHttpDataService
     {
         private HttpMessageHandler _httpMessageHandler = null;
         private ILogger _logger;

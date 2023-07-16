@@ -1,14 +1,12 @@
 ﻿using NationStatesSharp.Enums;
-using Priority_Queue;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace NationStatesSharp
 {
-    internal class RequestPriorityQueue : SimplePriorityQueue<Request, int>
+    internal class RequestPriorityQueue : PriorityQueue<Request, uint>
     {
         /// <summary>
         /// The queue detected, during the last Enqueue operation, that no one is waiting for new items. It is therefore reasonable to assume that the consumer died.
@@ -16,7 +14,7 @@ namespace NationStatesSharp
         /// </summary>
         public event EventHandler Jammed;
 
-        public new void Enqueue(Request item, int priority)
+        public new void Enqueue(Request item, uint priority)
         {
             if (item.Status == RequestStatus.Pending)
             {
@@ -25,23 +23,17 @@ namespace NationStatesSharp
                     Jammed?.Invoke(this, new EventArgs());
                 }
                 base.Enqueue(item, priority);
-                _waitCompletionSource?.TrySetResult(true);
+                _waitCompletionSource?.TrySetResult();
                 isWaiting = false;
-            }
-            if (this.Any(item => item.Status != RequestStatus.Pending))
-            {
-                this.Where(item => item.Status != RequestStatus.Pending).ToList().ForEach(item => TryRemove(item));
             }
         }
 
-        public new void EnqueueWithoutDuplicates(Request item, int priority) => throw new NotImplementedException();
-
-        private TaskCompletionSource<bool> _waitCompletionSource;
+        private TaskCompletionSource _waitCompletionSource;
         private bool isWaiting = false;
 
-        public Task<bool> WaitForNextItemAsync(CancellationToken cancellationToken)
+        public Task WaitForNextItemAsync(CancellationToken cancellationToken)
         {
-            if (this.Any(t => t.Status == RequestStatus.Pending))
+            if (Count > 0)
             {
                 return Task.FromResult(true);
             }
@@ -49,10 +41,10 @@ namespace NationStatesSharp
             {
                 if (!isWaiting)
                 {
-                    _waitCompletionSource = new TaskCompletionSource<bool>();
+                    _waitCompletionSource = new TaskCompletionSource();
                     isWaiting = true;
                 }
-                cancellationToken.Register(() => _waitCompletionSource.TrySetResult(false));
+                cancellationToken.Register(() => _waitCompletionSource.TrySetCanceled());
                 return _waitCompletionSource.Task;
             }
         }

@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "WrapperTest\Example.csproj", "{F4B86143-FF5F-425F-92F1-32EBCC568B71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{0F7F0D5B-A5BC-49E1-A8DD-B27CB6A72122}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F7F0D5B-A5BC-49E1-A8DD-B27CB6A72122}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F7F0D5B-A5BC-49E1-A8DD-B27CB6A72122}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4B86143-FF5F-425F-92F1-32EBCC568B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4B86143-FF5F-425F-92F1-32EBCC568B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4B86143-FF5F-425F-92F1-32EBCC568B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4B86143-FF5F-425F-92F1-32EBCC568B71}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

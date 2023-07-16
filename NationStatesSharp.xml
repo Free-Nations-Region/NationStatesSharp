@@ -7,6 +7,19 @@
         <member name="T:NationStatesSharp.DefaultDumpRetrievalService">
             <inheritdoc/>
         </member>
+        <member name="M:NationStatesSharp.DefaultDumpRetrievalService.#ctor(NationStatesSharp.Interfaces.IRequestDispatcher,Serilog.ILogger)">
+            <summary>
+            Creates DefaultDumpRetrievalService
+            </summary>
+            <param name="requestDispatcher">The requestDispatcher to use</param>
+            <param name="logger">The logger to use</param>
+        </member>
+        <member name="M:NationStatesSharp.DefaultDumpRetrievalService.#ctor(NationStatesSharp.Interfaces.IRequestDispatcher)">
+            <summary>
+            Creates DefaultDumpRetrievalService
+            </summary>
+            <param name="requestDispatcher">The requestDispatcher to use</param>
+        </member>
         <member name="M:NationStatesSharp.DefaultDumpRetrievalService.DownloadDumpAsync(NationStatesSharp.Enums.DumpType,System.Threading.CancellationToken)">
             <inheritdoc/>
             <exception cref="T:NationStatesSharp.HttpRequestFailedException">Thrown when the HTTP Request failed.</exception>
@@ -24,6 +37,11 @@
         </member>
         <member name="M:NationStatesSharp.DefaultDumpRetrievalService.IsLocalDumpAvailableAndUpToDate(System.String)">
             <inheritdoc/>
+        </member>
+        <member name="T:NationStatesSharp.Interfaces.IDumpRetrievalService">
+            <summary>
+            Service for Downloading NationStates Dumps
+            </summary>
         </member>
         <member name="M:NationStatesSharp.Interfaces.IDumpRetrievalService.DownloadDumpAsync(NationStatesSharp.Enums.DumpType,System.Threading.CancellationToken)">
             <summary>
@@ -63,6 +81,53 @@
             <param name="path">The path where the local dump file is located.</param>
             <returns>If a local dump is available and up to date.</returns>
             <remarks>NOTE: The official dump update time (22:30 PM PST -> 6:30 AM UTC) is compared to the last write time of that file to determine if it is outdated or not.</remarks>
+        </member>
+        <member name="T:NationStatesSharp.Interfaces.IRequestDispatcher">
+            <summary>
+            Handles all request handling, scheduling and rate limiting, 
+            </summary>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.AddToQueue(NationStatesSharp.Request,System.UInt32)">
+            <summary>
+            Adds a <see cref="T:NationStatesSharp.Request"/> to the internal queue with the specified priority 
+            </summary>
+            <param name="request">The <see cref="T:NationStatesSharp.Request"/> to add to the queue</param>
+            <param name="priority">The priority with this <see cref="T:NationStatesSharp.Request"/> should be scheduled. 
+            Lower priority numbers have priority over higher ones. (0 having highest priority)
+            Requests with the same priorities are processed according to the FIFO principle.</param>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.AddToQueue(System.Collections.Generic.IEnumerable{NationStatesSharp.Request},System.UInt32)">
+            <summary>
+            Adds a <see cref="T:NationStatesSharp.Request"/> to the internal queue with the specified priority 
+            </summary>
+            <param name="requests">The <see cref="T:NationStatesSharp.Request"/>s to add to the queue</param>
+            <param name="priority">The priority with this <see cref="T:NationStatesSharp.Request"/> should be scheduled. 
+            Lower priority numbers have priority over higher ones. (0 having highest priority)
+            Requests with the same priorities are processed according to the FIFO principle.</param>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.Dispatch(NationStatesSharp.Request,System.UInt32)">
+            <summary>
+            
+            </summary>
+            <param name="request"></param>
+            <param name="priority"></param>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.Dispatch(System.Collections.Generic.IEnumerable{NationStatesSharp.Request},System.UInt32)">
+            <summary>
+            Queues a request for dispatching. See also <see cref="M:NationStatesSharp.Interfaces.IRequestDispatcher.AddToQueue(System.Collections.Generic.IEnumerable{NationStatesSharp.Request},System.UInt32)"/>
+            </summary>
+            <param name="requests">The <see cref="T:NationStatesSharp.Request"/>s to add to the queue</param>
+            <param name="priority"></param>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.Start">
+            <summary>
+            Start the internal request worker to start processing request in the internal queue.
+            </summary>
+        </member>
+        <member name="M:NationStatesSharp.Interfaces.IRequestDispatcher.Shutdown">
+            <summary>
+            Stops the internal request worker and cancel all remaining request in the queue.
+            </summary>
         </member>
         <member name="E:NationStatesSharp.RequestPriorityQueue.Jammed">
             <summary>

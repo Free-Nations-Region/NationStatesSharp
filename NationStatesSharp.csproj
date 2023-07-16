@@ -1,23 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-    <Version>0.1.0</Version>
+    <TargetFramework>net7.0</TargetFramework>
+    <Version>0.2.0</Version>
     <Authors>drehtisch</Authors>
-    <PackageVersion>0.1.0-preview-2</PackageVersion>
+    <PackageVersion>0.2.0-Preview-1</PackageVersion>
     <Company />
     <Product />
     <PackageLicenseExpression></PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Free-Nations-Region/NationStatesSharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Free-Nations-Region/NationStatesSharp</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright (c) 2021 drehtisch</Copyright>
+    <Copyright>Copyright (c) 2023 drehtisch</Copyright>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <NeutralLanguage>Englisch</NeutralLanguage>
-    <PackageReleaseNotes>
-      - DumpRetrieval
-    </PackageReleaseNotes>
+    <PackageReleaseNotes>- Improve ease of use
+- Simplify Request Dispatching API
+</PackageReleaseNotes>
     <DocumentationFile>NationStatesSharp.xml</DocumentationFile>
+    <Description>NationStates API Wrapper, supporting request scheduling by priority according to ratelimits</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,8 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OptimizedPriorityQueue" Version="5.0.0" />
-    <PackageReference Include="Serilog" Version="2.10.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog" Version="3.0.1" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
   </ItemGroup>
 </Project>
